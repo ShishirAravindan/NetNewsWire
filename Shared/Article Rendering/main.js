@@ -136,13 +136,20 @@ function error() {
 	document.body.innerHTML = "error";
 }
 
+function isSubstackFootnoteHash(hash) {
+	return hash.startsWith("#footnote-") && !hash.startsWith("#footnote-anchor-");
+}
+
 // Takes into account absoluting of URLs.
 function isLocalFootnote(target) {
-	return target.hash.startsWith("#fn") && target.href.indexOf(document.baseURI) === 0;
+	const hash = target.hash || "";
+	const isKnownFootnoteHash = hash.startsWith("#fn") || isSubstackFootnoteHash(hash);
+	return isKnownFootnoteHash && target.href.indexOf(document.baseURI) === 0;
 }
 
 function styleLocalFootnotes() {
-	for (elem of document.querySelectorAll("sup > a[href*='#fn'], sup > div > a[href*='#fn']")) {
+	const selectors = "sup > a[href*='#fn'], sup > div > a[href*='#fn'], a.footnote-anchor[href^='#footnote-']";
+	for (elem of document.querySelectorAll(selectors)) {
 		if (isLocalFootnote(elem)) {
 			elem.classList.add("footnote");
 		}

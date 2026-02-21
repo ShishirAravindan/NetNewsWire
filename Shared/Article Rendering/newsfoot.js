@@ -119,53 +119,91 @@
 		}
 	}
 			
-	function idFromHash(target) {
-		if (!target.hash) return;
-		return decodeURIComponent(target.hash.substring(1));
-	}
-	/** @type {{fnref(target:HTMLAnchorElement): string|undefined}[]} */
-	const footnoteFormats = [
-		{ // Multimarkdown
-			fnref(target) {
-				if (!target.matches(".footnote")) return;
-				return idFromHash(target);
-			}
+		function idFromHash(target) {
+			if (!target.hash) return;
+			return decodeURIComponent(target.hash.substring(1));
 		}
-	];
+
+		/** @param {HTMLElement} targetElement */
+		function substackFootnoteContent(targetElement) {
+			const footnote = targetElement.closest(".footnote");
+			if (!footnote) return;
+			const content = footnote.querySelector(".footnote-content");
+			return content?.innerHTML;
+		}
+
+		/** @type {{fnref(target:HTMLAnchorElement): string|undefined, content?(targetElement:HTMLElement): string|undefined}[]} */
+		const footnoteFormats = [
+			{ // Multimarkdown
+				fnref(target) {
+					if (!target.matches(".footnote")) return;
+					const id = idFromHash(target);
+					if (!id || !id.startsWith("fn")) return;
+					return id;
+				},
+				content(targetElement) {
+					return targetElement.innerHTML;
+				}
+			},
+			{ // Substack
+				fnref(target) {
+					if (!target.matches(".footnote")) return;
+					if (!target.matches(".footnote-anchor")) return;
+
+					const id = idFromHash(target);
+					if (!id || !id.startsWith("footnote-")) return;
+					if (id.startsWith("footnote-anchor-")) return;
+					return id;
+				},
+				content(targetElement) {
+					return substackFootnoteContent(targetElement) ?? targetElement.innerHTML;
+				}
+			}
+		];
 	
 	// Handle clicks on the footnote reference
 	document.addEventListener("click", (ev) => {
 		if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
 
-		let targetId = undefined;
-		for(const f of footnoteFormats) {
-			targetId = f.fnref(ev.target);
-			if (targetId) break;
-		}
-		if (targetId === undefined) return;
-		
-		// Only override the default behaviour when we know we can find the
-		// target element
-		const targetElement = document.getElementById(targetId);
-		if (targetElement === null) return;
-				
-		ev.preventDefault();
+			let targetId = undefined;
+			let contentHTML = undefined;
+			for(const f of footnoteFormats) {
+				targetId = f.fnref(ev.target);
+				if (targetId === undefined) continue;
 
-		installContainer(ev.target);
-				
-		void new Footnote(targetElement.innerHTML, ev.target);
-    });
-										   
-	// Handle clicks on the footnote reverse link
-    document.addEventListener("click", (ev) =>
-    {
-	    if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
-        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, .footnotes .footnote-return, .footnotes a[href*='#fn'], .footnotes a[href^='#']")) return;
-		const id = idFromHash(ev.target);
-		if (!id) return;
-		const fnref = document.getElementById(id);
+				const targetElement = document.getElementById(targetId);
+				if (!(targetElement instanceof HTMLElement)) {
+					targetId = undefined;
+					continue;
+				}
 
-		window.scrollTo({ top: fnref.getBoundingClientRect().top + window.scrollY });
-	    ev.preventDefault();
-	});
+				contentHTML = f.content ? f.content(targetElement) : targetElement.innerHTML;
+				if (contentHTML === undefined) {
+					targetId = undefined;
+					continue;
+				}
+				break;
+			}
+			if (targetId === undefined || contentHTML === undefined) return;
+			
+			ev.preventDefault();
+
+			installContainer(ev.target);
+					
+			void new Footnote(contentHTML, ev.target);
+	    });
+											   
+		// Handle clicks on the footnote reverse link
+	    document.addEventListener("click", (ev) =>
+	    {
+		    if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
+	        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, .footnotes .footnote-return, .footnotes a[href*='#fn'], .footnotes a[href^='#'], .footnote .footnote-number[href^='#footnote-anchor-']")) return;
+			const id = idFromHash(ev.target);
+			if (!id) return;
+			const fnref = document.getElementById(id);
+			if (!fnref) return;
+
+			window.scrollTo({ top: fnref.getBoundingClientRect().top + window.scrollY });
+		    ev.preventDefault();
+		});
 }());
