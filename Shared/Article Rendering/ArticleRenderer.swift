@@ -325,7 +325,7 @@ private extension ArticleRenderer {
 @MainActor private extension Article {
 
 	var baseURL: URL? {
-		var s = link
+		var s = preferredLink
 		if s == nil {
 			s = feed?.homePageURL
 		}
