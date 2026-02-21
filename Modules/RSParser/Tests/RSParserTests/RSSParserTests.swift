@@ -199,6 +199,18 @@ final class RSSParserTests: XCTestCase {
 		}
 	}
 
+	func testSubstackFootnoteAnchorsStayRelativeWhenGuidIsNotPermalink() {
+		let d = parserData("substack-footnotes", "rss", "https://moneyandmeaning.substack.com/feed")
+		let parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertEqual(parsedFeed.items.count, 1)
+
+		let article = parsedFeed.items.first!
+		XCTAssertNil(article.url)
+		XCTAssertEqual(article.externalURL, "https://moneyandmeaning.substack.com/p/the-long-dark-part-i")
+		XCTAssertTrue(article.contentHTML?.contains("href=\"#footnote-1-178538253\"") ?? false)
+		XCTAssertFalse(article.contentHTML?.contains("moneyandmeaning.substack.com/#footnote-1-178538253") ?? false)
+	}
+
 //	func testFeedWithGB2312Encoding() {
 //		// This feed has an encoding we don’t run into very often.
 //		// https://github.com/Ranchero-Software/NetNewsWire/issues/1477
