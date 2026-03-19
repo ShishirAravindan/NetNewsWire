@@ -146,6 +146,16 @@ final class DetailWebViewController: NSViewController {
 		reloadHTMLMaintainingScrollPosition()
 	}
 
+	// MARK: Selection
+
+	func selectedText() async -> String? {
+		let result = try? await webView.evaluateJavaScript("window.getSelection().toString()")
+		guard let text = result as? String, !text.isEmpty else {
+			return nil
+		}
+		return text
+	}
+
 	// MARK: Media Functions
 
 	func stopMediaPlayback() {

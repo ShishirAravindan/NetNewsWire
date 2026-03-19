@@ -224,6 +224,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return canCopyArticleURL()
 		}
 
+		if item.action == #selector(copyArticleQuoteLink(_:)) {
+			return currentLink != nil
+		}
+
 		if item.action == #selector(copyExternalURL(_:)) {
 			return canCopyExternalURL()
 		}
@@ -351,6 +355,24 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		let pasteboard = NSPasteboard.general
 		pasteboard.clearContents()
 		pasteboard.setString(markdownLinks.joined(separator: "\n"), forType: .string)
+	}
+
+	@IBAction func copyArticleQuoteLink(_ sender: Any?) {
+		guard let link = currentLink else {
+			return
+		}
+		Task { @MainActor in
+			guard let selectedText = await detailViewController?.selectedText() else {
+				return
+			}
+			guard let encodedText = selectedText.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) else {
+				return
+			}
+			let quoteLink = "\(link)#:~:text=\(encodedText)"
+			let pasteboard = NSPasteboard.general
+			pasteboard.clearContents()
+			pasteboard.setString(quoteLink, forType: .string)
+		}
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
