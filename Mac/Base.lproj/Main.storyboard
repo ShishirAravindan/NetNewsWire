@@ -143,6 +143,12 @@
                                                 <action selector="copyArticleURL:" target="Ady-hI-5gd" id="A5t-x7-Mmy"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Copy as Markdown Link" keyEquivalent="m" id="Cmd-Sh-Mkd">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="copyArticleAsMarkdown:" target="Ady-hI-5gd" id="Mkd-Ac-Lnk"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Copy External URL" keyEquivalent="c" id="fOF-99-6Iv">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>

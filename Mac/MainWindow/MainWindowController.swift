@@ -220,6 +220,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return canCopyArticleURL()
 		}
 
+		if item.action == #selector(copyArticleAsMarkdown(_:)) {
+			return canCopyArticleURL()
+		}
+
 		if item.action == #selector(copyExternalURL(_:)) {
 			return canCopyExternalURL()
 		}
@@ -325,6 +329,28 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		}
 
 		URLPasteboardWriter.write(urlStrings: links, to: .general)
+	}
+
+	@IBAction func copyArticleAsMarkdown(_ sender: Any?) {
+		guard let articles = selectedArticles else {
+			assertionFailure("Expected selectedArticles to be non-nil")
+			return
+		}
+		let markdownLinks = articles.compactMap { article -> String? in
+			guard let link = article.preferredLink else {
+				return nil
+			}
+			let title = article.title ?? link
+			return "[\(title)](\(link))"
+		}
+		if markdownLinks.isEmpty {
+			assertionFailure("Expected at least one link")
+			return
+		}
+
+		let pasteboard = NSPasteboard.general
+		pasteboard.clearContents()
+		pasteboard.setString(markdownLinks.joined(separator: "\n"), forType: .string)
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
