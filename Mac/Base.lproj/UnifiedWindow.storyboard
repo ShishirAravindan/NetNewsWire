@@ -34,7 +34,7 @@
                 <splitViewController id="wEf-EP-9Fq" sceneMemberID="viewController">
                     <splitViewItems>
                         <splitViewItem canCollapse="YES" holdingPriority="260" behavior="sidebar" id="XVW-Gk-g7U"/>
-                        <splitViewItem holdingPriority="255" behavior="contentList" id="UkR-qu-7uT"/>
+                        <splitViewItem canCollapse="YES" holdingPriority="255" behavior="contentList" id="UkR-qu-7uT"/>
                         <splitViewItem id="EtR-h8-kPm"/>
                     </splitViewItems>
                     <splitView key="splitView" wantsLayer="YES" dividerStyle="thin" vertical="YES" id="3QF-bA-qOw">

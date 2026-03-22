@@ -403,9 +403,14 @@
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="Ocl-6H-m3k"/>
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
                                                 <action selector="toggleSidebar:" target="Ady-hI-5gd" id="CZ1-aO-CkF"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Hide Timeline" keyEquivalent="s" id="F0c-Km-9Xp">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="toggleTimeline:" target="Ady-hI-5gd" id="K1v-Rn-3Ht"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="jKG-b2-ZWf"/>

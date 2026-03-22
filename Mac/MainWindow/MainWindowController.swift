@@ -375,6 +375,13 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		}
 	}
 
+	@IBAction func toggleTimeline(_ sender: Any?) {
+		guard let timelineSplitViewItem else {
+			return
+		}
+		timelineSplitViewItem.isCollapsed = !timelineSplitViewItem.isCollapsed
+	}
+
 	@IBAction func copyExternalURL(_ sender: Any?) {
 		guard let articles = selectedArticles else {
 			assertionFailure("Expected selectedArticles to be non-nil")
@@ -1015,6 +1022,10 @@ private extension MainWindowController {
 		return splitViewController?.splitViewItems[0]
 	}
 
+	var timelineSplitViewItem: NSSplitViewItem? {
+		return splitViewController?.splitViewItems[1]
+	}
+
 	var detailSplitViewItem: NSSplitViewItem? {
 		return splitViewController?.splitViewItems[2]
 	}
@@ -1040,6 +1051,7 @@ private extension MainWindowController {
 		let isFullScreen = window?.styleMask.contains(.fullScreen) ?? false
 
 		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
+		let isTimelineHidden = timelineSplitViewItem?.isCollapsed ?? false
 		let splitViewWidths: [Int]
 		if let splitView = splitViewController?.splitView, let window {
 			let dividerThickness = splitView.dividerThickness
@@ -1067,6 +1079,7 @@ private extension MainWindowController {
 		return MainWindowState(isFullScreen: isFullScreen,
 							   splitViewWidths: splitViewWidths,
 							   isSidebarHidden: isSidebarHidden,
+							   isTimelineHidden: isTimelineHidden,
 							   sidebarWindowState: sidebarViewController?.windowState,
 							   timelineWindowState: timelineContainerViewController?.windowState,
 							   detailWindowState: detailViewController?.windowState)
@@ -1411,6 +1424,7 @@ private extension MainWindowController {
 		}
 
 		sidebarSplitViewItem?.isCollapsed = isSidebarHidden
+		timelineSplitViewItem?.isCollapsed = state.isTimelineHidden
 	}
 
 	/// Restore main window split view using legacy state restoration data.

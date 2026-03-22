@@ -15,14 +15,16 @@ final class MainWindowState: NSObject, NSSecureCoding {
 	let isFullScreen: Bool
 	let splitViewWidths: [Int]
 	let isSidebarHidden: Bool
+	let isTimelineHidden: Bool
 	let sidebarWindowState: SidebarWindowState?
 	let timelineWindowState: TimelineWindowState?
 	let detailWindowState: DetailWindowState?
 
-	init(isFullScreen: Bool, splitViewWidths: [Int], isSidebarHidden: Bool, sidebarWindowState: SidebarWindowState? = nil, timelineWindowState: TimelineWindowState? = nil, detailWindowState: DetailWindowState? = nil) {
+	init(isFullScreen: Bool, splitViewWidths: [Int], isSidebarHidden: Bool, isTimelineHidden: Bool = false, sidebarWindowState: SidebarWindowState? = nil, timelineWindowState: TimelineWindowState? = nil, detailWindowState: DetailWindowState? = nil) {
 		self.isFullScreen = isFullScreen
 		self.splitViewWidths = splitViewWidths
 		self.isSidebarHidden = isSidebarHidden
+		self.isTimelineHidden = isTimelineHidden
 		self.sidebarWindowState = sidebarWindowState
 		self.timelineWindowState = timelineWindowState
 		self.detailWindowState = detailWindowState
@@ -32,6 +34,7 @@ final class MainWindowState: NSObject, NSSecureCoding {
 		static let isFullScreen = "isFullScreen"
 		static let splitViewWidths = "splitViewWidths"
 		static let isSidebarHidden = "isSidebarHidden"
+		static let isTimelineHidden = "isTimelineHidden"
 		static let sidebarWindowState = "sidebarWindowState"
 		static let timelineWindowState = "timelineWindowState"
 		static let detailWindowState = "detailWindowState"
@@ -41,6 +44,7 @@ final class MainWindowState: NSObject, NSSecureCoding {
 		isFullScreen = coder.decodeBool(forKey: Key.isFullScreen)
 		splitViewWidths = coder.decodeObject(of: [NSArray.self, NSNumber.self], forKey: Key.splitViewWidths) as? [Int] ?? []
 		isSidebarHidden = coder.decodeBool(forKey: Key.isSidebarHidden)
+		isTimelineHidden = coder.decodeBool(forKey: Key.isTimelineHidden)
 		sidebarWindowState = coder.decodeObject(of: SidebarWindowState.self, forKey: Key.sidebarWindowState)
 		timelineWindowState = coder.decodeObject(of: TimelineWindowState.self, forKey: Key.timelineWindowState)
 		detailWindowState = coder.decodeObject(of: DetailWindowState.self, forKey: Key.detailWindowState)
@@ -50,6 +54,7 @@ final class MainWindowState: NSObject, NSSecureCoding {
 		coder.encode(isFullScreen, forKey: Key.isFullScreen)
 		coder.encode(splitViewWidths, forKey: Key.splitViewWidths)
 		coder.encode(isSidebarHidden, forKey: Key.isSidebarHidden)
+		coder.encode(isTimelineHidden, forKey: Key.isTimelineHidden)
 		coder.encode(sidebarWindowState, forKey: Key.sidebarWindowState)
 		coder.encode(timelineWindowState, forKey: Key.timelineWindowState)
 		coder.encode(detailWindowState, forKey: Key.detailWindowState)
@@ -59,6 +64,6 @@ final class MainWindowState: NSObject, NSSecureCoding {
 		let sidebar = sidebarWindowState?.description ?? "nil"
 		let timeline = timelineWindowState?.description ?? "nil"
 		let detail = detailWindowState?.description ?? "nil"
-		return "MainWindowState: fullScreen=\(isFullScreen), widths=\(splitViewWidths), sidebarHidden=\(isSidebarHidden), sidebar=[\(sidebar)], timeline=[\(timeline)], detail=[\(detail)]"
+		return "MainWindowState: fullScreen=\(isFullScreen), widths=\(splitViewWidths), sidebarHidden=\(isSidebarHidden), timelineHidden=\(isTimelineHidden), sidebar=[\(sidebar)], timeline=[\(timeline)], detail=[\(detail)]"
 	}
 }
