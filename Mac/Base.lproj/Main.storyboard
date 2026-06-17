@@ -149,6 +149,12 @@
                                                 <action selector="copyExternalURL:" target="Ady-hI-5gd" id="MkV-Do-Bc1"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Send Quote to Logseq" keyEquivalent="l" id="Lgs-Qt-Snd">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                                            <connections>
+                                                <action selector="sendQuoteToLogseq:" target="Ady-hI-5gd" id="Lgs-Ac-Snd"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Paste" keyEquivalent="v" id="gVA-U4-sdL">
                                             <connections>
                                                 <action selector="paste:" target="Ady-hI-5gd" id="UvS-8e-Qdg"/>

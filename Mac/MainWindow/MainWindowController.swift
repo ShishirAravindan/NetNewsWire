@@ -238,6 +238,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return canCopyExternalURL()
 		}
 
+		if item.action == #selector(sendQuoteToLogseq(_:)) {
+			return currentLink != nil
+		}
+
 		if item.action == #selector(openArticleInBrowser(_:)) {
 			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
 				item.title = Browser.titleForOpenInBrowserInverted
@@ -339,6 +343,23 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		}
 
 		URLPasteboardWriter.write(urlStrings: links, to: .general)
+	}
+
+	@IBAction func sendQuoteToLogseq(_ sender: Any?) {
+		guard let article = oneSelectedArticle, let link = article.preferredLink else {
+			return
+		}
+		Task { @MainActor in
+			guard let selectedText = await detailViewController?.selectedText() else {
+				return
+			}
+			let author = article.authors?.first?.name
+			let feedName = article.feed?.nameForDisplay
+			guard let url = LogseqQuoteCapture.captureURL(selectedText: selectedText, author: author, feedName: feedName, title: article.title, link: link) else {
+				return
+			}
+			NSWorkspace.shared.open(url)
+		}
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {

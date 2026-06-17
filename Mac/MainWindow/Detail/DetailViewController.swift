@@ -87,6 +87,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		currentSourceMode = mode
 	}
 
+	func selectedText() async -> String? {
+		await currentWebViewController.selectedText()
+	}
+
 	func stopMediaPlayback() {
 		currentWebViewController.stopMediaPlayback()
 	}
